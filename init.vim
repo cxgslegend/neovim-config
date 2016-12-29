@@ -25,41 +25,41 @@ let mapleader = "\<Space>"
 "                              General Settings                                 "
 "                                                                               "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set foldenable                           " enable folding
-set foldcolumn=3                         " Gutter wider by 3 columns
-set foldmethod=marker                    " Make markers the defualt folding pattern
-set foldlevelstart=3                     " open most folds by default
-set belloff=all                          " Turn all annoying bell sounds off
-set showcmd                              " Show key strokes as they are typed.
-set relativenumber                       " Make line numbers relative to the current line
-set number                               " Turn hybrid relative numbers on (makes current line show real line number)
-set cursorline                           " highlight current line
-silent! set winminwidth=10               " Set minimum number of columns to be filled for all splits
-set winwidth=85                          " Sets the minimum number of columns to be filled in the current split
-set winheight=5                          " You cannot make winheight smaller than winminheight. Therefore we set it first to avoid errors.
-set winminheight=5                       " Sets all splits to have a min height of 5
-set winheight=999                        " Sets the current split to fill most of the height
-set history=1000                         " Remember last 1000 commands
-set scrolloff=5                          " Keep at least 4 lines below cursor
-set hidden                               " Allow buffer change w/o saving
-set backspace=indent,eol,start           " Sane backspace behavior
-set wildmenu                             " Adds tab completion for exe commands
-set tabstop=4                            " Make an tab 4 spaces long
-set shiftwidth=4                         " Make an indent 4 spaces long
+set foldenable                                    " enable folding
+set foldcolumn=3                                  " Gutter wider by 3 columns
+set foldmethod=marker                             " Make markers the defualt folding pattern
+set foldlevelstart=3                              " open most folds by default
+set belloff=all                                   " Turn all annoying bell sounds off
+set showcmd                                       " Show key strokes as they are typed.
+set relativenumber                                " Make line numbers relative to the current line
+set number                                        " Turn hybrid relative numbers on (makes current line show real line number)
+set cursorline                                    " highlight current line
+silent! set winminwidth=10                        " Set minimum number of columns to be filled for all splits
+set winwidth=85                                   " Sets the minimum number of columns to be filled in the current split
+set winheight=5                                   " You cannot make winheight smaller than winminheight. Therefore we set it first to avoid errors.
+set winminheight=5                                " Sets all splits to have a min height of 5
+set winheight=999                                 " Sets the current split to fill most of the height
+set history=1000                                  " Remember last 1000 commands
+set scrolloff=5                                   " Keep at least 4 lines below cursor
+set hidden                                        " Allow buffer change w/o saving
+set backspace=indent,eol,start                    " Sane backspace behavior
+set wildmenu                                      " Adds tab completion for exe commands
+set tabstop=4                                     " Make an tab 4 spaces long
+set shiftwidth=4                                  " Make an indent 4 spaces long
 set expandtab
-" set softtabstop=4                        " Make an indent 4 spaces long in insert mode
-set list                                 " Allow us to see special characters
-set listchars=tab:▸␣                     " Set tab character.
-set ignorecase                           " Case insensitive searches (must be on for smartcase to work)
-set smartcase                            " By adding a uppercase letter it will be case sensitive
-set tags+=tags                           " Tell vim to look for a tags file
-set background=dark                      " Make the theme dark
-set autoindent                           " Make new line the same indentation level as the last line
-set nospell                              " Turn off spelling correction
-set laststatus=2                         " Turn on the status line
-set hlsearch                             " Highlight search items that match
-set omnifunc=syntaxcomplete#Complete     " Turn on Omnicompletion (it is off by defualt)
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip " Ignore certain files
+" set softtabstop=4                                 " Make an indent 4 spaces long in insert mode
+set list                                          " Allow us to see special characters
+set listchars=eol:$,tab:▸␣,trail:~,extends:>,precedes:< " Set tab character.
+set ignorecase                                    " Case insensitive searches (must be on for smartcase to work)
+set smartcase                                     " By adding a uppercase letter it will be case sensitive
+set tags+=tags                                    " Tell vim to look for a tags file
+set background=dark                               " Make the theme dark
+set autoindent                                    " Make new line the same indentation level as the last line
+set nospell                                       " Turn off spelling correction
+set laststatus=2                                  " Turn on the status line
+set hlsearch                                      " Highlight search items that match
+set omnifunc=syntaxcomplete#Complete              " Turn on Omnicompletion (it is off by defualt)
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip          " Ignore certain files
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                                                               "
