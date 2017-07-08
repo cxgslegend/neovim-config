@@ -19,6 +19,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 let mapleader = "\<Space>"
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                                                               "
@@ -46,7 +47,7 @@ set backspace=indent,eol,start                    " Sane backspace behavior
 set wildmenu                                      " Adds tab completion for exe commands
 set tabstop=4                                     " Make an tab 4 spaces long
 set shiftwidth=4                                  " Make an indent 4 spaces long
-set expandtab
+set noexpandtab
 " set softtabstop=4                                 " Make an indent 4 spaces long in insert mode
 set list                                          " Allow us to see special characters
 set listchars=eol:$,tab:▸␣,trail:~,extends:>,precedes:< " Set tab character.
@@ -60,6 +61,7 @@ set laststatus=2                                  " Turn on the status line
 set hlsearch                                      " Highlight search items that match
 set omnifunc=syntaxcomplete#Complete              " Turn on Omnicompletion (it is off by defualt)
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip          " Ignore certain files
+set inccommand=nosplit
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                                                               "
@@ -103,6 +105,8 @@ Plug 'mattn/emmet-vim'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'Shougo/deoplete.nvim'
+Plug 'machakann/vim-highlightedyank'
+
 
 " Custom text objects
 Plug 'kana/vim-textobj-user'
@@ -190,6 +194,18 @@ nnoremap <leader>ch :call CenterHeader()<cr>
 
 nnoremap / /\v
 
+if has('nvim')
+	tnoremap <Esc> <c-\><c-n>
+	tnoremap <A-[> <Esc>
+	tnoremap <A-h> <c-\><c-n><c-w>h
+	tnoremap <A-j> <c-\><c-n><c-w>j
+	tnoremap <A-k> <c-\><c-n><c-w>k
+	tnoremap <A-l> <c-\><c-n><c-w>l
+	tnoremap <A-h> <c-w>h
+	tnoremap <A-j> <c-w>j
+	tnoremap <A-k> <c-w>k
+	tnoremap <A-l> <c-w>l
+endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                                                               "
 "                              Plugin Settings                                  "
@@ -210,6 +226,7 @@ let g:airline_theme           = 'bubblegum'
 let g:ctrlp_custom_ignore     = '\v[\/](node_modules|target|dist)|(\.(swp|ico|git|svn))$'
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_cache_dir         = $HOME . '/.cache/ctrlp'
+let g:ctrlp_cmd               = 'CtrlPMRU'
 if executable('ag')
 	let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
 	let g:ackprg = 'ag --vimgrep'
@@ -227,6 +244,8 @@ let g:pandoc#formatting#mode = "sA"
 let g:pandoc#formatting#smart_autoformat_on_cursormoved = 1
 let g:pandoc#folding#level                              = 3
 let g:pandoc#folding#mode                               = "relative"
+let g:pandoc#command#autoexec_on_writes = 1
+let g:pandoc#command#autoexec_command = "Pandoc! pdf"
 
 let g:UltiSnipsSnippetsDir         = "~/.config/nvim/plugged/vim-snippets/UltiSnips/"
 let g:UltiSnipsExpandTrigger       = "<tab>"
@@ -240,7 +259,7 @@ let g:EasyMotion_smartcase = 1
 let g:jsx_ext_required = 0
 
 let g:deoplete#enable_at_startup = 1
-
+"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                                                               "
 "                              Custom Functions                                 "
