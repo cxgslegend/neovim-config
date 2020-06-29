@@ -19,7 +19,6 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 let mapleader = "\<Space>"
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                                                               "
@@ -58,6 +57,7 @@ set smartcase                                              " By adding a upperca
 set softtabstop=4                                          " Make an indent 4 spaces long in insert mode
 set tabstop=4                                              " Make an tab 4 spaces long
 set tags+=tags                                             " Tell vim to look for a tags file
+set termguicolors                                          " Add true color support (this will make cterm colors stop working, so make sure gui colors are set)
 set timeoutlen=400                                         " Shorten timeout length for which key. The default timeoutlen is 1000 ms
 set undodir=~/.config/nvim/undo-dir                        " Give a directory for storing undo data for files
 set undofile                                               " Tell vim that we can undo files even after re-opening it.
@@ -199,7 +199,7 @@ syntax on
 colorscheme hybrid
 
 " Make color column purple color
-highlight ColorColumn                                                   ctermbg=60
+highlight ColorColumn                                   guibg='#5f5f87' ctermbg=60
 
 " Floating windows are yucky yucky yucky. No good, very bad.
 let g:which_key_map                                                            = {}
