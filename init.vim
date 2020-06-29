@@ -64,7 +64,6 @@ set undofile                                               " Tell vim that we ca
 set updatetime=1500                                        " Decrease update time for plugins like gitgutter
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip                   " Ignore certain files
 set wildmenu                                               " Adds tab completion for exe commands
-set winheight=5                                            " You cannot make winheight smaller than winminheight. Therefore we set it first to avoid errors.
 set winheight=999                                          " Sets the current split to fill most of the height
 set winminheight=5                                         " Sets all splits to have a min height of 5
 set winminwidth=10                                         " Set minimum number of columns to be filled for all splits
@@ -200,59 +199,59 @@ syntax on
 colorscheme hybrid
 
 " Make color column purple color
-highlight ColorColumn ctermbg=60
+highlight ColorColumn                                                   ctermbg=60
 
 " Floating windows are yucky yucky yucky. No good, very bad.
-let g:which_key_map                                                       = {}
-let g:which_key_use_floating_win                                          = 0
+let g:which_key_map                                                            = {}
+let g:which_key_use_floating_win                                               = 0
 
 " Vim table mode settings
-let g:table_mode_corner_corner                                            = "+"
-let g:table_mode_header_fillchar                                          = "="
+let g:table_mode_corner_corner                                                 = "+"
+let g:table_mode_header_fillchar                                               = "="
 " FOR THE LOVE OF GOD, WHY DO PLUGINS SET THEIR OWN MAPPINGS!!!!!!!!!!! I AM
 " GOING TO FREAKING LOSE IT I SWEAR.
-let g:table_mode_disable_mappings                                         = 1
-let g:table_mode_disable_tableize_mappings                                = 1
-let g:table_mode_map_prefix                                               = "<nop>"
+let g:table_mode_disable_mappings                                              = 1
+let g:table_mode_disable_tableize_mappings                                     = 1
+let g:table_mode_map_prefix                                                    = "<nop>"
 
 " Setup airline to make vim look nice
-let g:airline_powerline_fonts                                             = 1
-let g:airline_theme                                                       = 'bubblegum'
+let g:airline_powerline_fonts                                                  = 1
+let g:airline_theme                                                            = 'bubblegum'
 
 " Setup vim pad for taking nice markdown notes
-let g:pad#default_file_extension                                          = ".md"
-let g:pad#default_format                                                  = "pandoc"
-let g:pad#dir                                                             = "~/Dropbox/vim-notes/"
-let g:pad#search_backend                                                  = "ag"
-let g:pad#window_height                                                   = 14
+let g:pad#default_file_extension                                               = ".md"
+let g:pad#default_format                                                       = "pandoc"
+let g:pad#dir                                                                  = "~/Dropbox/vim-notes/"
+let g:pad#search_backend                                                       = "ag"
+let g:pad#window_height                                                        = 14
 " Dont let pad set its own mappings
-let g:pad#set_mappings = 0
+let g:pad#set_mappings                                                         = 0
 
 " Setup pandoc to make a pdf from markdown with the ':Pandoc pdf' command
-let g:pandoc#folding#level                                                = 3
-let g:pandoc#folding#mode                                                 = "relative"
-let g:pandoc#formatting#mode                                              = "sA"
-let g:pandoc#formatting#smart_autoformat_on_cursormoved                   = 1
+let g:pandoc#folding#level                                                     = 3
+let g:pandoc#folding#mode                                                      = "relative"
+let g:pandoc#formatting#mode                                                   = "sA"
+let g:pandoc#formatting#smart_autoformat_on_cursormoved                        = 1
 
 " Setup git gutter
-let g:gitgutter_enabled                                                   = 1
-let g:gitgutter_sign_added                                                = '⏽'
-let g:gitgutter_sign_modified                                             = '⏽'
-let g:gitgutter_sign_modified_removed                                     = '⏽'
-let g:gitgutter_sign_removed                                              = '▓'
-let g:gitgutter_sign_removed_first_line                                   = '▓'
+let g:gitgutter_enabled                                                        = 1
+let g:gitgutter_sign_added                                                     = '⏽'
+let g:gitgutter_sign_modified                                                  = '⏽'
+let g:gitgutter_sign_modified_removed                                          = '⏽'
+let g:gitgutter_sign_removed                                                   = '▓'
+let g:gitgutter_sign_removed_first_line                                        = '▓'
 " Dont let git gutter set its own mappings (we might want to add back in the
 " omaps).
-let g:gitgutter_map_keys = 0
-highlight GitGutterAdd    guifg=#98c379 ctermfg=2
-highlight GitGutterChange guifg=#61afef ctermfg=3
-highlight GitGutterDelete guifg=#e06c75 ctermfg=1
+let g:gitgutter_map_keys                                                       = 0
+highlight GitGutterAdd                                  guifg='#98c379' ctermfg=2
+highlight GitGutterChange                               guifg='#61afef' ctermfg=3
+highlight GitGutterDelete                               guifg='#e06c75' ctermfg=1
 
 " Trigger a highlight in the appropriate direction when pressing these keys:
-let g:qs_highlight_on_keys                                                = ['f', 'F', 't', 'T']
-let g:qs_max_chars                                                        = 150
-highlight QuickScopePrimary guifg='#00C7DF' gui=underline ctermfg=155 cterm=underline
-highlight QuickScopeSecondary guifg='#eF5F70' gui=underline ctermfg=81 cterm=underline
+let g:qs_highlight_on_keys                                                     = ['f', 'F', 't', 'T']
+let g:qs_max_chars                                                             = 150
+highlight QuickScopePrimary     guifg='#00C7DF' gui=underline ctermfg=155 cterm=underline
+highlight QuickScopeSecondary   guifg='#eF5F70' gui=underline ctermfg=81  cterm=underline
 
 let g:coc_global_extensions=[
 \	'coc-clangd',
@@ -274,29 +273,31 @@ let g:coc_global_extensions=[
 \]
 
 " Assume we can see dot files by default
-let g:NERDTreeShowHidden                                                  = 1
+let g:NERDTreeShowHidden                                                       = 1
 
 " Disable sort motion from polluting motion keys by assigning it to something
-" that would never be pressed.
-let g:sort_motion                                                         = "¥¢€gs"
-let g:sort_motion_lines                                                   = "¥¢€gss"
-let g:sort_motion_visual                                                  = "¥¢€gs"
+" that would never be pressed. I didn't put <Plug> at the beginning because I
+" assumed there were a lot of mappings with <Plug> at the start, and I didn't
+" know if it in any way effected performance.
+let g:sort_motion                                                              = "¥¢€<Plug>gs"
+let g:sort_motion_lines                                                        = "¥¢€<Plug>gss"
+let g:sort_motion_visual                                                       = "¥¢€<Plug>gs"
 
 " Close tags files types
-let g:closetag_filenames                                                  = '*.html,*.xhtml,*.phtml,*.php'
-let g:closetag_filetypes                                                  = 'html,xhtml,phtml,javascript,php'
-let g:closetag_xhtml_filenames                                            = '*.xhtml,*.jsx,*.js'
+let g:closetag_filenames                                                       = '*.html,*.xhtml,*.phtml,*.php'
+let g:closetag_filetypes                                                       = 'html,xhtml,phtml,javascript,php'
+let g:closetag_xhtml_filenames                                                 = '*.xhtml,*.jsx,*.js'
 
 " Rainbow brackets config
-let g:rainbow#max_level                                                   = 16
-let g:rainbow#pairs                                                       = [['(', ')'], ['[', ']'], ['{', '}']]
+let g:rainbow#max_level                                                        = 16
+let g:rainbow#pairs                                                            = [['(', ')'], ['[', ']'], ['{', '}']]
 
 " Dont use floating windows
-let g:vim_be_good_floating                                                = 0
+let g:vim_be_good_floating                                                     = 0
 
 " Setup python so vim will stop yelling at us.
-let g:python_host_prog                                                    = "/usr/local/bin/python2"
-let g:python3_host_prog                                                   = "/usr/local/bin/python3"
+let g:python_host_prog                                                         = "/usr/local/bin/python2"
+let g:python3_host_prog                                                        = "/usr/local/bin/python3"
 "
 " I don't really ever use :grep, however I set it to use ripgrep here just in case
 " I ever do on accident.
