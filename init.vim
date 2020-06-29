@@ -44,8 +44,10 @@ set laststatus=2                                           " Turn on the status 
 set list                                                   " Allow us to see special characters
 set listchars=eol:$,tab:▸␣,trail:~,extends:>,precedes:<    " Set tab character.
 set mouse=a                                                " Turn mouse mode on for all modes (normal, visual, insert, ... etc).
+set nobackup                                               " Some language servers have issues with backups
 set noexpandtab                                            " Use spaces when tab is used in insert mode
 set nospell                                                " Turn off spelling correction
+set nowritebackup                                          " Some language servers have issues with backups
 set number                                                 " Turn hybrid relative numbers on (makes current line show real line number)
 set omnifunc=syntaxcomplete#Complete                       " Turn on Omnicompletion (it is off by defualt)
 set relativenumber                                         " Make line numbers relative to the current line
@@ -53,6 +55,7 @@ set scrolloff=5                                            " Keep at least 4 lin
 set shiftwidth=4                                           " Make an indent 4 spaces long
 set shortmess+=c                                           " Suppress the annoying 'match x of y', 'The only match' and 'Pattern not found' messages
 set showcmd                                                " Show key strokes as they are typed.
+set signcolumn=yes                                         " Make it so the sign column always is visible so it doesn't shift text when it appears
 set smartcase                                              " By adding a uppercase letter it will be case sensitive
 set softtabstop=4                                          " Make an indent 4 spaces long in insert mode
 set tabstop=4                                              " Make an tab 4 spaces long
@@ -84,6 +87,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'flazz/vim-colorschemes'
 Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'machakann/vim-highlightedyank'
+Plug 'norcalli/nvim-colorizer.lua'
 Plug 'ryanoasis/vim-devicons'
 Plug 'scrooloose/nerdtree'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -129,7 +133,6 @@ Plug 'dahu/VimRegexTutor'
 Plug 'kana/vim-textobj-user'               " Get a plugin for defining custom objects
 " Predefined custom objects
 Plug 'kana/vim-textobj-entire'
-Plug 'kana/vim-textobj-function'
 Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-line'
 Plug 'sgur/vim-textobj-parameter'
@@ -166,11 +169,20 @@ if has("autocmd")
 		" Jump to the last place we were in a file
 		autocmd BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-		" TODO
-		autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+		" Highlight the symbol and its references when holding the cursor.
+		autocmd CursorHold * silent call CocActionAsync('highlight')
+
+		" Setup formatexpr specified filetype(s).
+		autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+
+		" Update signature help on jump placeholder.
+		autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
 		" Turn on rainbow brackets in all files
 		autocmd FileType * RainbowParentheses
+
+		" Don't try to make the tick mark pairs in markdown files
+		autocmd FileType markdown let b:coc_pairs_disabled = ['`']
 
 		" Set some vim settings for when we are writing git commits
 		autocmd Filetype gitcommit setlocal spell tw=72 colorcolumn=73
@@ -205,6 +217,25 @@ highlight ColorColumn                                   guibg='#5f5f87' ctermbg=
 let g:which_key_map                                                            = {}
 let g:which_key_use_floating_win                                               = 0
 
+" Bring in settings for lua plugin colorizer dkaf
+" luafile ~/.config/nvim/plug-colorizer.lua
+lua << EOF
+require 'colorizer'.setup(
+	{'*';},
+	{
+		RGB      = true;        -- #RGB hex codes
+		RRGGBB   = true;        -- #RRGGBB hex codes
+		names    = true;        -- "Name" codes like Blue
+		RRGGBBAA = true;        -- #RRGGBBAA hex codes
+		rgb_fn   = true;        -- CSS rgb() and rgba() functions
+		hsl_fn   = true;        -- CSS hsl() and hsla() functions
+		css      = true;        -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+		css_fn   = true;        -- Enable all CSS *functions*: rgb_fn, hsl_fn
+		-- Available modes: foreground, background
+		mode     = 'background'; -- Set the display mode.
+	})
+EOF
+
 " Vim table mode settings
 let g:table_mode_corner_corner                                                 = "+"
 let g:table_mode_header_fillchar                                               = "="
@@ -217,6 +248,11 @@ let g:table_mode_map_prefix                                                    =
 " Setup airline to make vim look nice
 let g:airline_powerline_fonts                                                  = 1
 let g:airline_theme                                                            = 'bubblegum'
+let g:airline#extensions#coc#enabled = 1
+let airline#extensions#coc#error_symbol = 'E:'
+let airline#extensions#coc#warning_symbol = 'W:'
+let airline#extensions#coc#stl_format_err = '%E{[%e(#%fe)]}'
+let airline#extensions#coc#stl_format_warn = '%W{[%w(#%fw)]}'
 
 " Setup vim pad for taking nice markdown notes
 let g:pad#default_file_extension                                               = ".md"
@@ -283,6 +319,9 @@ let g:sort_motion                                                              =
 let g:sort_motion_lines                                                        = "¥¢€<Plug>gss"
 let g:sort_motion_visual                                                       = "¥¢€<Plug>gs"
 
+" If we don't stop auto pairs from mapping CR it will conflict with coc
+let g:AutoPairsMapCR = 0
+
 " Close tags files types
 let g:closetag_filenames                                                       = '*.html,*.xhtml,*.phtml,*.php'
 let g:closetag_filetypes                                                       = 'html,xhtml,phtml,javascript,php'
@@ -333,8 +372,41 @@ nnoremap q :quit<cr>
 " Evaluate shell command under cursor, and replace with output.
 noremap Q !!$SHELL<cr>
 
+" Setup coc to complete by hitting tab
+inoremap <silent><expr> <TAB>
+			\ pumvisible() ? "\<C-n>" :
+			\ <SID>CheckBackSpace() ? "\<TAB>" :
+			\ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+if exists('*complete_info')
+	inoremap <expr> <cr>
+		\ complete_info()["selected"] != "-1" ? "\<C-y>" :
+		\ <SID>CheckLeftCurlyBrace() ?
+		\ "\<C-g>u\<CR>\<ESC>\<S-O>" :
+		\ "\<C-g>u\<CR>"
+else
+	inoremap <expr> <cr>
+		\ pumvisible() ? "\<C-y>" :
+		\ <SID>CheckLeftCurlyBrace() ?
+		\ "\<C-g>u\<CR>\<ESC>\<S-O>" :
+		\ "\<C-g>u\<CR>"
+endif
+
 " This unsets the "last search pattern" register by hitting return
 nnoremap <cr> :noh<cr>
+
+" xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
 
 " Leader keys under which key
 nnoremap <silent> <leader> :silent <c-u> :silent WhichKey '<Space>'<CR>
@@ -410,6 +482,42 @@ let g:which_key_map.g = {
 \	'u' : ['<Plug>(GitGutterUndoHunk)'         , 'undo hunk'],
 \}
 
+let g:which_key_map.l = {
+\'name' : '+lsp' ,
+\	'.' : [':CocConfig'                          , 'config'],
+\	';' : ['<Plug>(coc-refactor)'                , 'refactor'],
+\	'A' : ['<Plug>(coc-codeaction-selected)'     , 'selected action'],
+\	'B' : [':CocPrev'                            , 'prev action'],
+\	'D' : ['<Plug>(coc-declaration)'             , 'declaration'],
+\	'F' : ['<Plug>(coc-format)'                  , 'format'],
+\	'I' : [':CocList diagnostics'                , 'diagnostics'],
+\	'N' : ['<Plug>(coc-diagnostic-next-error)'   , 'next error'],
+\	'O' : [':CocList outline'                    , 'outline'],
+\	'P' : ['<Plug>(coc-diagnostic-prev-error)'   , 'prev error'],
+\	'R' : ['<Plug>(coc-references)'              , 'references'],
+\	'U' : [':CocUpdate'                          , 'update CoC'],
+\	'Z' : [':CocEnable'                          , 'enable CoC'],
+\	'a' : ['<Plug>(coc-codeaction)'              , 'line action'],
+\	'b' : [':CocNext'                            , 'next action'],
+\	'c' : [':CocList commands'                   , 'commands'],
+\	'd' : ['<Plug>(coc-definition)'              , 'definition'],
+\	'e' : [':CocList extensions'                 , 'extensions'],
+\	'f' : ['<Plug>(coc-format-selected)'         , 'format selected'],
+\	'h' : ['<Plug>(coc-float-hide)'              , 'hide'],
+\	'i' : ['<Plug>(coc-implementation)'          , 'implementation'],
+\	'j' : ['<Plug>(coc-float-jump)'              , 'float jump'],
+\	'l' : ['<Plug>(coc-codelens-action)'         , 'code lens'],
+\	'n' : ['<Plug>(coc-diagnostic-next)'         , 'next diagnostic'],
+\	'o' : ['<Plug>(coc-openlink)'                , 'open link'],
+\	'p' : ['<Plug>(coc-diagnostic-prev)'         , 'prev diagnostic'],
+\	'q' : ['<Plug>(coc-fix-current)'             , 'quickfix'],
+\	'r' : ['<Plug>(coc-rename)'                  , 'rename'],
+\	's' : [':CocList -I symbols'                 , 'references'],
+\	't' : ['<Plug>(coc-type-definition)'         , 'type definition'],
+\	'u' : [':CocListResume'                      , 'resume list'],
+\	'z' : [':CocDisable'                         , 'disable CoC'],
+\}
+
 " n is for notes
 let g:which_key_map.n = {
 \	'name' : '+notes' ,
@@ -476,10 +584,6 @@ let g:which_key_map.w = {
 
 call which_key#register('<Space>', "g:which_key_map")
 
-inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
 " nvim terminal mappings
 if has('nvim')
 	tnoremap <Esc> <c-\><c-n>
@@ -514,6 +618,21 @@ function! ConvertMarkdownToPDF()
 	if current_filetype ==? "markdown"
 		execute "Pandoc! pdf"
 	endif
+endfunction
+
+" Return true if your cursor is at column 0 or if the character behind your cursor
+" is a whitespace character or any of the following characters ['\', '[', ']',
+" '{', '}', '[', ']', '<', '>', ':', ',', '=', '(', ')', '/', ';']
+function! s:CheckBackSpace() abort
+	let col = col('.') - 1
+	return !col || getline('.')[col - 1]  =~# '\(\s\|\\\|[\|]\|{\|}\|\[\|\]\|<\|>\|:\|,\|=\|(\|)\|\/\|;\)'
+endfunction
+"
+" Return true if your cursor is at column 0 or if the character behind your cursor
+" is a { character
+function! s:CheckLeftCurlyBrace() abort
+	let col = col('.') - 1
+	return !col || getline('.')[col - 1]  ==# '{'
 endfunction
 
 " function! CreateMarkdownHeader()
