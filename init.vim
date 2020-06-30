@@ -300,7 +300,6 @@ let g:coc_global_extensions=[
 \	'coc-markdownlint',
 \	'coc-phpls',
 \	'coc-python',
-\	'coc-python',
 \	'coc-r-lsp',
 \	'coc-sql',
 \	'coc-texlab',
