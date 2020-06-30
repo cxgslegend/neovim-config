@@ -1,6 +1,5 @@
-" Will save file, and Source files even if it is a python file
-function! SaveAndSource()
-	:w
+" Will source the current file, even if it is a python file
+function! SourceByFiletype()
 	let current_filetype = &filetype
 
 	if current_filetype ==? "vim"

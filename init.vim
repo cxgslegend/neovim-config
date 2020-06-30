@@ -153,18 +153,18 @@ if has("autocmd")
 		autocmd Bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 		" We source this in a seperate file, so that when we source the
-		" init.vim file, it doesn't try to resource the SaveAndSource function
+		" init.vim file, it doesn't try to resource the SourceByFiletype() function
 		" while it is in use.
-		autocmd VimEnter * source ~/.config/nvim/source-and-source.vim
+		autocmd VimEnter * source ~/.config/nvim/source-by-filetype.vim
 
-		" Re-source my init.vim file if I save it
-		autocmd BufWritePost init.vim :call SaveAndSource()
+		" Delete all trailing white space before saving
+		autocmd BufWritePre *.* :%s/\s\+$//e
 
 		" When I open my vimrc file, start it completly folded
 		autocmd BufRead init.vim set foldlevel=0
 
-		" Delete all trailing white space before saving
-		autocmd BufWritePre *.* :%s/\s\+$//e
+		" Re-source my init.vim file if I save it
+		autocmd BufWritePost init.vim :call SourceByFiletype()
 
 		" Jump to the last place we were in a file
 		autocmd BufReadPost * if expand('%:p') !~# '\m/\.git/' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -219,6 +219,7 @@ let g:which_key_use_floating_win                                               =
 
 " Bring in settings for lua plugin colorizer dkaf
 " luafile ~/.config/nvim/plug-colorizer.lua
+if !exists('g:loaded_colorizer')
 lua << EOF
 require 'colorizer'.setup(
 	{'*';},
@@ -235,6 +236,7 @@ require 'colorizer'.setup(
 		mode     = 'background'; -- Set the display mode.
 	})
 EOF
+endif
 
 " Vim table mode settings
 let g:table_mode_corner_corner                                                 = "+"
@@ -259,7 +261,7 @@ let g:pad#default_file_extension                                               =
 let g:pad#default_format                                                       = "pandoc"
 let g:pad#dir                                                                  = "~/Dropbox/vim-notes/"
 let g:pad#search_backend                                                       = "ag"
-let g:pad#window_height                                                        = 14
+let g:pad#window_height                                                        = 30
 " Dont let pad set its own mappings
 let g:pad#set_mappings                                                         = 0
 
@@ -289,6 +291,7 @@ let g:qs_max_chars                                                             =
 highlight QuickScopePrimary     guifg='#00C7DF' gui=underline ctermfg=155 cterm=underline
 highlight QuickScopeSecondary   guifg='#eF5F70' gui=underline ctermfg=81  cterm=underline
 
+" List coc extensions to auto install
 let g:coc_global_extensions=[
 \	'coc-clangd',
 \	'coc-css',
@@ -351,12 +354,13 @@ endif
 "                                                                               "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Non-leader keys
+" Do not allow me to use arrow keys (yuck!!!).
 inoremap <Left>  <nop>
 inoremap <Right> <nop>
 inoremap <Up>    <nop>
 inoremap <Down>  <nop>
 
+" Do not allow me to use arrow keys in insert mode (super yuck!!!!).
 noremap <Left>   <esc>:echo "Don't be an idiot"<cr>
 noremap <Right>  <esc>:echo "Don't be an idiot"<cr>
 noremap <Up>     <esc>:echo "Don't be an idiot"<cr>
@@ -459,7 +463,7 @@ let g:which_key_map.f = {
 \	't' : [':Rg'                               , 'search text'],
 \}
 " I need to do the binding here to get echo'ing to work
-nnoremap <leader>fw :call SaveAndSource()<cr>
+nnoremap <leader>fw :call SourceByFiletype()<cr>
 let g:which_key_map.f.w = 'write and source'
 
 " g is for git
@@ -582,6 +586,7 @@ let g:which_key_map.w = {
 \	'v' : [':vsplit'                           , 'vertical split'],
 \}
 
+" Register which_key dictionary key map
 call which_key#register('<Space>', "g:which_key_map")
 
 " nvim terminal mappings
