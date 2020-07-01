@@ -69,8 +69,8 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip                   " Ignore certain file
 set wildmenu                                               " Adds tab completion for exe commands
 set winheight=5                                            " Sets the current split to fill most of the height
 set winminheight=5                                         " Sets all splits to have a min height of 5
-set winminwidth=10                                         " Set minimum number of columns to be filled for all splits
 set winwidth=85                                            " Sets the minimum number of columns to be filled in the current split
+set winminwidth=60                                         " Set minimum number of columns to be filled for all splits
 
 set encoding=UTF-8
 
