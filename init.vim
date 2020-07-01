@@ -67,7 +67,7 @@ set undofile                                               " Tell vim that we ca
 set updatetime=1500                                        " Decrease update time for plugins like gitgutter
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip                   " Ignore certain files
 set wildmenu                                               " Adds tab completion for exe commands
-set winheight=999                                          " Sets the current split to fill most of the height
+set winheight=5                                            " Sets the current split to fill most of the height
 set winminheight=5                                         " Sets all splits to have a min height of 5
 set winminwidth=10                                         " Set minimum number of columns to be filled for all splits
 set winwidth=85                                            " Sets the minimum number of columns to be filled in the current split
@@ -152,6 +152,10 @@ if has("autocmd")
 		" Quit vim if nerd tree is the only open window open
 		autocmd Bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
+		" Resize window horizontaly and verticaly, so that the current split
+		" is maximized, and the others are minimized
+		autocmd WinEnter * :res | :vertical res
+
 		" We source this in a seperate file, so that when we source the
 		" init.vim file, it doesn't try to resource the SourceByFiletype() function
 		" while it is in use.
@@ -226,12 +230,12 @@ require 'colorizer'.setup(
 	{
 		RGB      = true;        -- #RGB hex codes
 		RRGGBB   = true;        -- #RRGGBB hex codes
-		names    = true;        -- "Name" codes like Blue
 		RRGGBBAA = true;        -- #RRGGBBAA hex codes
-		rgb_fn   = true;        -- CSS rgb() and rgba() functions
-		hsl_fn   = true;        -- CSS hsl() and hsla() functions
 		css      = true;        -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
 		css_fn   = true;        -- Enable all CSS *functions*: rgb_fn, hsl_fn
+		hsl_fn   = true;        -- CSS hsl() and hsla() functions
+		names    = true;        -- "Name" codes like Blue
+		rgb_fn   = true;        -- CSS rgb() and rgba() functions
 		-- Available modes: foreground, background
 		mode     = 'background'; -- Set the display mode.
 	})
@@ -245,16 +249,16 @@ let g:table_mode_header_fillchar                                               =
 " GOING TO FREAKING LOSE IT I SWEAR.
 let g:table_mode_disable_mappings                                              = 1
 let g:table_mode_disable_tableize_mappings                                     = 1
-let g:table_mode_map_prefix                                                    = "<nop>"
+let g:table_mode_map_prefix                                                    = "¥¢€<Plug>gs"
 
 " Setup airline to make vim look nice
+let airline#extensions#coc#error_symbol                                        = 'E:'
+let airline#extensions#coc#stl_format_err                                      = '%E{[%e(#%fe)]}'
+let airline#extensions#coc#stl_format_warn                                     = '%W{[%w(#%fw)]}'
+let airline#extensions#coc#warning_symbol                                      = 'W:'
+let g:airline#extensions#coc#enabled                                           = 1
 let g:airline_powerline_fonts                                                  = 1
 let g:airline_theme                                                            = 'bubblegum'
-let g:airline#extensions#coc#enabled = 1
-let airline#extensions#coc#error_symbol = 'E:'
-let airline#extensions#coc#warning_symbol = 'W:'
-let airline#extensions#coc#stl_format_err = '%E{[%e(#%fe)]}'
-let airline#extensions#coc#stl_format_warn = '%W{[%w(#%fw)]}'
 
 " Setup vim pad for taking nice markdown notes
 let g:pad#default_file_extension                                               = ".md"
@@ -577,12 +581,12 @@ let g:which_key_map.v = {
 " w is for window
 let g:which_key_map.w = {
 \	'name' : '+window' ,
-\	'h' : ['<C-W>h'                            , 'move left'],
-\	'j' : ['<C-W>j'                            , 'move down'],
-\	'k' : ['<C-W>k'                            , 'move up'],
-\	'l' : ['<C-W>l'                            , 'move right'],
-\	's' : [':split'                            , 'horizontal split'],
-\	'v' : [':vsplit'                           , 'vertical split'],
+\	'h' : [':wincmd h'                          , 'move left'],
+\	'j' : [':wincmd j'                          , 'move down'],
+\	'k' : [':wincmd k'                          , 'move up'],
+\	'l' : [':wincmd l'                          , 'move right'],
+\	's' : [':split'                             , 'horizontal split'],
+\	'v' : [':vsplit'                            , 'vertical split'],
 \}
 
 " Register which_key dictionary key map
@@ -625,8 +629,8 @@ function! ConvertMarkdownToPDF()
 endfunction
 
 " Return true if your cursor is at column 0 or if the character behind your cursor
-" is a whitespace character or any of the following characters ['\', '[', ']',
-" '{', '}', '[', ']', '<', '>', ':', ',', '=', '(', ')', '/', ';']
+" is a whitespace character or any of the following characters \ [ ] { } [ ] < > :
+" , = ( ) / ;
 function! s:CheckBackSpace() abort
 	let col = col('.') - 1
 	return !col || getline('.')[col - 1]  =~# '\(\s\|\\\|[\|]\|{\|}\|\[\|\]\|<\|>\|:\|,\|=\|(\|)\|\/\|;\)'
