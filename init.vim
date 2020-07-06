@@ -69,8 +69,8 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip                   " Ignore certain file
 set wildmenu                                               " Adds tab completion for exe commands
 set winheight=5                                            " Sets the current split to fill most of the height
 set winminheight=5                                         " Sets all splits to have a min height of 5
-set winwidth=85                                            " Sets the minimum number of columns to be filled in the current split
-set winminwidth=60                                         " Set minimum number of columns to be filled for all splits
+set winwidth=60                                            " Sets the minimum number of columns to be filled in the current split
+set winminwidth=40                                         " Set minimum number of columns to be filled for all splits
 
 set encoding=UTF-8
 
@@ -150,11 +150,22 @@ if has("autocmd")
 	augroup cleargroup
 		autocmd!
 		" Quit vim if nerd tree is the only open window open
-		autocmd Bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+		autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 		" Resize window horizontaly and verticaly, so that the current split
 		" is maximized, and the others are minimized
-		autocmd WinEnter * :res | :vertical res
+		" autocmd WinEnter *.nerdtree setlocal winwidth=10
+
+		autocmd WinEnter * let current_win = winnr() |
+						\ let NT_win = bufwinnr('NERD_tree_*') |
+						\ if NT_win ==# current_win |
+						\	execute 'noautocmd setlocal winwidth='.g:NERDTreeWinSize |
+						\ elseif NT_win !=# -1 |
+						\	execute 'noautocmd '.NT_win.'wincmd w' |
+						\	noautocmd wincmd p |
+						\	resize |
+						\	vertical resize |
+						\ endif
 
 		" We source this in a seperate file, so that when we source the
 		" init.vim file, it doesn't try to resource the SourceByFiletype() function
@@ -316,6 +327,7 @@ let g:coc_global_extensions=[
 
 " Assume we can see dot files by default
 let g:NERDTreeShowHidden                                                       = 1
+let g:NERDTreeWinSize                                                          = 40
 
 " Disable sort motion from polluting motion keys by assigning it to something
 " that would never be pressed. I didn't put <Plug> at the beginning because I
@@ -374,7 +386,7 @@ noremap <buffer> k gk
 noremap <buffer> j gj
 
 " Quit current buffer
-nnoremap q :quit<cr>
+nnoremap <silent>q :quit<cr>
 
 " Evaluate shell command under cursor, and replace with output.
 noremap Q !!$SHELL<cr>
@@ -457,7 +469,7 @@ let g:which_key_map.b = {
 \	'p' : ['bprevious'                         , 'previous-buffer'] ,
 \}
 
-" f is for toggle
+" f is for file
 let g:which_key_map.f = {
 \	'name' : '+file' ,
 \	'f' : [':Files'                            , 'search files'],
@@ -528,11 +540,13 @@ let g:which_key_map.l = {
 " n is for notes
 let g:which_key_map.n = {
 \	'name' : '+notes' ,
-\	'g' : [':call ConvertMarkdownToPDF()'      , 'generate pdf'],
 \	'l' : [':Pad ls'                           , 'list'],
 \	'n' : [':Pad new'                          , 'new'],
 \	's' : ['<Plug>(pad-search)'                , 'search'],
 \}
+" Its not working in the dictionary mapping
+nnoremap <leader>ng :call ConvertMarkdownToPDF()<cr>
+let g:which_key_map.n.g = 'generate pdf'
 
 " s is for search
 let g:which_key_map.s = {
@@ -561,7 +575,7 @@ let g:which_key_map.t = {
 \	'name' : '+toggle' ,
 \	'g' : [':GitGutterSignsToggle'             , 'toggle git gutter'],
 \	'h' : [':GitGutterLineHighlightsToggle'    , 'highlight hunks'],
-\	'n' : [':NERDTreeToggle'                   , 'nerdtree'],
+\	'n' : ['OpenNerdTreeWithoutSwitchingToIt()', 'nerdtree'],
 \	's' : [':set spell!'                       , 'spelling'],
 \	}
 " For some reason, I can't bind it in the map above
@@ -587,7 +601,10 @@ let g:which_key_map.w = {
 \	'l' : [':wincmd l'                          , 'move right'],
 \	's' : [':split'                             , 'horizontal split'],
 \	'v' : [':vsplit'                            , 'vertical split'],
+\	'=' : [':wincmd ='                          , 'equal all windows'],
 \}
+nnoremap <leader>wr :res <cr> | :vertical res<cr>
+let g:which_key_map.t.t = 'resize'
 
 " Register which_key dictionary key map
 call which_key#register('<Space>', "g:which_key_map")
@@ -623,8 +640,18 @@ endfunction
 function! ConvertMarkdownToPDF()
 	let current_filetype = &filetype
 
-	if current_filetype ==? "markdown"
+	if current_filetype ==? "markdown" || current_filetype ==? "pandoc"
 		execute "Pandoc! pdf"
+	endif
+endfunction
+
+" Toggles nerdtree, but it will not switch focus to NerdTree (also it fixes the width).
+function! OpenNerdTreeWithoutSwitchingToIt()
+	if g:NERDTree.IsOpen()
+		execute "NERDTreeToggle"
+	else
+		execute "NERDTreeToggle"
+		execute "normal \<C-w>\<C-p>"
 	endif
 endfunction
 
