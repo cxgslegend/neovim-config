@@ -154,8 +154,6 @@ if has("autocmd")
 
 		" Resize window horizontaly and verticaly, so that the current split
 		" is maximized, and the others are minimized
-		" autocmd WinEnter *.nerdtree setlocal winwidth=10
-
 		autocmd WinEnter * let current_win = winnr() |
 						\ let NT_win = bufwinnr('NERD_tree_*') |
 						\ if NT_win ==# current_win |
