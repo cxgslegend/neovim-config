@@ -154,16 +154,7 @@ if has("autocmd")
 
 		" Resize window horizontaly and verticaly, so that the current split
 		" is maximized, and the others are minimized
-		autocmd WinEnter * let current_win = winnr() |
-						\ let NT_win = bufwinnr('NERD_tree_*') |
-						\ if NT_win ==# current_win |
-						\	execute 'noautocmd setlocal winwidth='.g:NERDTreeWinSize |
-						\ elseif NT_win !=# -1 |
-						\	execute 'noautocmd '.NT_win.'wincmd w' |
-						\	noautocmd wincmd p |
-						\	resize |
-						\	vertical resize |
-						\ endif
+		autocmd WinEnter * :call NerdTreeWindowMaximizeHandler()
 
 		" We source this in a seperate file, so that when we source the
 		" init.vim file, it doesn't try to resource the SourceByFiletype() function
@@ -650,6 +641,28 @@ function! OpenNerdTreeWithoutSwitchingToIt()
 	else
 		execute "NERDTreeToggle"
 		execute "normal \<C-w>\<C-p>"
+	endif
+endfunction
+
+function! NerdTreeWindowMaximizeHandler()
+	let current_win = winnr()
+	let NT_win = bufwinnr('NERD_tree_*')
+	if exists("b:NERDTree")
+		if NT_win ==# current_win
+			execute 'noautocmd setlocal winwidth='.g:NERDTreeWinSize
+		elseif NT_win !=# -1
+			execute 'noautocmd '.NT_win.'wincmd w'
+			noautocmd wincmd p
+			resize
+			vertical resize
+		endif
+	else
+		if !&diff
+			resize
+			vertical resize
+		else
+			noautocmd wincmd =
+		endif
 	endif
 endfunction
 
