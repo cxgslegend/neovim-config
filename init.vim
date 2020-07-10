@@ -70,7 +70,7 @@ set wildmenu                                               " Adds tab completion
 set winheight=5                                            " Sets the current split to fill most of the height
 set winminheight=5                                         " Sets all splits to have a min height of 5
 set winwidth=60                                            " Sets the minimum number of columns to be filled in the current split
-set winminwidth=40                                         " Set minimum number of columns to be filled for all splits
+set winminwidth=30                                         " Set minimum number of columns to be filled for all splits
 
 set encoding=UTF-8
 
@@ -124,6 +124,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'mattn/emmet-vim'                                 " Expand with <c-y>,
 Plug 'neoclide/coc.nvim', {'branch': 'release'}        " Support LSP protocol
 Plug 'tpope/vim-fugitive'                              " Git support within vim
+Plug 'brett-griffin/PHPDocBlocks.vim'                  " Add php doc blocks in on save
 
 " Learn to vim correctly
 Plug 'ThePrimeagen/vim-be-good', {'do': './install.sh'}
@@ -155,6 +156,7 @@ if has("autocmd")
 		" Resize window horizontaly and verticaly, so that the current split
 		" is maximized, and the others are minimized
 		autocmd WinEnter * :call NerdTreeWindowMaximizeHandler()
+		autocmd DiffUpdated * :call NerdTreeWindowMaximizeHandler()
 
 		" We source this in a seperate file, so that when we source the
 		" init.vim file, it doesn't try to resource the SourceByFiletype() function
@@ -316,7 +318,14 @@ let g:coc_global_extensions=[
 
 " Assume we can see dot files by default
 let g:NERDTreeShowHidden                                                       = 1
-let g:NERDTreeWinSize                                                          = 40
+let g:NERDTreeWinSize                                                          = 30
+
+" We will let vim rooter handle this stuff
+let g:startify_change_to_dir = 0
+let g:startify_change_to_vcs_root = 0
+
+" Add to the rooter patterns
+let g:rooter_patterns = ['.env', '.gitignore', '.gitattributes', '.styleci.yml', '_ide_helper', 'composer.json', 'composer.lock', 'package.json', 'README.md', '.editorconfig', '.git', '.git/', '_darcs/', '.hg/', '.bzr/', '.svn/']
 
 " Disable sort motion from polluting motion keys by assigning it to something
 " that would never be pressed. I didn't put <Plug> at the beginning because I
@@ -388,6 +397,7 @@ inoremap <silent><expr> <TAB>
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 " Use <c-space> to trigger completion.
+nnoremap <silent><expr> <c-space> coc#refresh()
 inoremap <silent><expr> <c-space> coc#refresh()
 
 if exists('*complete_info')
@@ -564,7 +574,7 @@ let g:which_key_map.t = {
 \	'name' : '+toggle' ,
 \	'g' : [':GitGutterSignsToggle'             , 'toggle git gutter'],
 \	'h' : [':GitGutterLineHighlightsToggle'    , 'highlight hunks'],
-\	'n' : ['OpenNerdTreeWithoutSwitchingToIt()', 'nerdtree'],
+\	'n' : ['OpenNerdTree()'                    , 'nerdtree'],
 \	's' : [':set spell!'                       , 'spelling'],
 \	}
 " For some reason, I can't bind it in the map above
@@ -634,13 +644,29 @@ function! ConvertMarkdownToPDF()
 	endif
 endfunction
 
-" Toggles nerdtree, but it will not switch focus to NerdTree (also it fixes the width).
-function! OpenNerdTreeWithoutSwitchingToIt()
+" Toggles nerdtree
+function! OpenNerdTree()
 	if g:NERDTree.IsOpen()
 		execute "NERDTreeToggle"
 	else
 		execute "NERDTreeToggle"
-		execute "normal \<C-w>\<C-p>"
+
+		" Sometimes I don't like it moving the cursor to nerdtree. Thats why
+		" this function exists. But I change my mind all the time, and
+		" sometimes its commented out, which makes it the same as just calling
+		" NERDTreeToggle directly (Meh)
+		" execute "normal \<C-w>\<C-p>"
+	endif
+endfunction
+
+" Will resize current window to maximize it. If it is a diff, it will equalize
+" the windows
+function! ResizeCurrentWindow()
+	if !&diff
+		resize
+		vertical resize
+	else
+		noautocmd wincmd =
 	endif
 endfunction
 
@@ -652,17 +678,11 @@ function! NerdTreeWindowMaximizeHandler()
 			execute 'noautocmd setlocal winwidth='.g:NERDTreeWinSize
 		elseif NT_win !=# -1
 			execute 'noautocmd '.NT_win.'wincmd w'
-			noautocmd wincmd p
-			resize
-			vertical resize
+			" noautocmd wincmd p
+			call ResizeCurrentWindow()
 		endif
 	else
-		if !&diff
-			resize
-			vertical resize
-		else
-			noautocmd wincmd =
-		endif
+		call ResizeCurrentWindow()
 	endif
 endfunction
 
