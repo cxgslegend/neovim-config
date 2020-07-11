@@ -417,7 +417,8 @@ endif
 " This unsets the "last search pattern" register by hitting return
 nnoremap <cr> :noh<cr>
 
-" xmap if <Plug>(coc-funcobj-i)
+" Set up coc text objects
+xmap if <Plug>(coc-funcobj-i)
 omap if <Plug>(coc-funcobj-i)
 xmap af <Plug>(coc-funcobj-a)
 omap af <Plug>(coc-funcobj-a)
@@ -503,37 +504,16 @@ let g:which_key_map.g = {
 let g:which_key_map.l = {
 \'name' : '+lsp' ,
 \	'.' : [':CocConfig'                          , 'config'],
-\	';' : ['<Plug>(coc-refactor)'                , 'refactor'],
-\	'A' : ['<Plug>(coc-codeaction-selected)'     , 'selected action'],
-\	'B' : [':CocPrev'                            , 'prev action'],
-\	'D' : ['<Plug>(coc-declaration)'             , 'declaration'],
-\	'F' : ['<Plug>(coc-format)'                  , 'format'],
-\	'I' : [':CocList diagnostics'                , 'diagnostics'],
-\	'N' : ['<Plug>(coc-diagnostic-next-error)'   , 'next error'],
-\	'O' : [':CocList outline'                    , 'outline'],
-\	'P' : ['<Plug>(coc-diagnostic-prev-error)'   , 'prev error'],
-\	'R' : ['<Plug>(coc-references)'              , 'references'],
-\	'U' : [':CocUpdate'                          , 'update CoC'],
-\	'Z' : [':CocEnable'                          , 'enable CoC'],
-\	'a' : ['<Plug>(coc-codeaction)'              , 'line action'],
-\	'b' : [':CocNext'                            , 'next action'],
-\	'c' : [':CocList commands'                   , 'commands'],
+\	'a' : ['<Plug>(coc-rename)'                  , 'alter name (rename)'],
 \	'd' : ['<Plug>(coc-definition)'              , 'definition'],
-\	'e' : [':CocList extensions'                 , 'extensions'],
 \	'f' : ['<Plug>(coc-format-selected)'         , 'format selected'],
-\	'h' : ['<Plug>(coc-float-hide)'              , 'hide'],
 \	'i' : ['<Plug>(coc-implementation)'          , 'implementation'],
-\	'j' : ['<Plug>(coc-float-jump)'              , 'float jump'],
-\	'l' : ['<Plug>(coc-codelens-action)'         , 'code lens'],
-\	'n' : ['<Plug>(coc-diagnostic-next)'         , 'next diagnostic'],
-\	'o' : ['<Plug>(coc-openlink)'                , 'open link'],
-\	'p' : ['<Plug>(coc-diagnostic-prev)'         , 'prev diagnostic'],
-\	'q' : ['<Plug>(coc-fix-current)'             , 'quickfix'],
-\	'r' : ['<Plug>(coc-rename)'                  , 'rename'],
-\	's' : [':CocList -I symbols'                 , 'references'],
+\	'm' : [':CocList diagnostics'                , 'diagnostics messages'],
+\	'n' : ['<Plug>(coc-diagnostic-next-error)'   , 'next error'],
+\	'p' : ['<Plug>(coc-diagnostic-prev-error)'   , 'prev error'],
+\	'r' : ['<Plug>(coc-references)'              , 'references'],
+\	's' : [':CocList -I symbols'                 , 'search symbols'],
 \	't' : ['<Plug>(coc-type-definition)'         , 'type definition'],
-\	'u' : [':CocListResume'                      , 'resume list'],
-\	'z' : [':CocDisable'                         , 'disable CoC'],
 \}
 
 " n is for notes
