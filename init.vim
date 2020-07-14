@@ -67,8 +67,8 @@ set undofile                                               " Tell vim that we ca
 set updatetime=1500                                        " Decrease update time for plugins like gitgutter
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip                   " Ignore certain files
 set wildmenu                                               " Adds tab completion for exe commands
-set winheight=5                                            " Sets the current split to fill most of the height
-set winminheight=5                                         " Sets all splits to have a min height of 5
+" set winheight=5                                            " Sets the current split to fill most of the height
+" set winminheight=5                                         " Sets all splits to have a min height of 5
 set winwidth=60                                            " Sets the minimum number of columns to be filled in the current split
 set winminwidth=30                                         " Set minimum number of columns to be filled for all splits
 
@@ -124,7 +124,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'mattn/emmet-vim'                                 " Expand with <c-y>,
 Plug 'neoclide/coc.nvim', {'branch': 'release'}        " Support LSP protocol
 Plug 'tpope/vim-fugitive'                              " Git support within vim
-Plug 'brett-griffin/PHPDocBlocks.vim'                  " Add php doc blocks in on save
+Plug 'editorconfig/editorconfig-vim'
 
 " Learn to vim correctly
 Plug 'ThePrimeagen/vim-be-good', {'do': './install.sh'}
@@ -277,6 +277,9 @@ let g:pandoc#folding#mode                                                      =
 let g:pandoc#formatting#mode                                                   = "sA"
 let g:pandoc#formatting#smart_autoformat_on_cursormoved                        = 1
 
+" Exclude some buffers from editor config
+let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
+
 " Setup git gutter
 let g:gitgutter_enabled                                                        = 1
 let g:gitgutter_sign_added                                                     = '⏽'
@@ -398,7 +401,6 @@ inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 " Use <c-space> to trigger completion.
 nnoremap <silent><expr> <c-space> coc#refresh()
-inoremap <silent><expr> <c-space> coc#refresh()
 
 if exists('*complete_info')
 	inoremap <expr> <cr>
@@ -473,9 +475,9 @@ let g:which_key_map.b = {
 let g:which_key_map.f = {
 \	'name' : '+file' ,
 \	'f' : [':Files'                            , 'search files'],
-\	'p' : [':Lines'                            , 'lines'] ,
+\	'l' : [':Lines'                            , 'lines'] ,
+\	'p' : [':Rg'                               , 'search text'],
 \	's' : [':wa'                               , 'save all'],
-\	't' : [':Rg'                               , 'search text'],
 \}
 " I need to do the binding here to get echo'ing to work
 nnoremap <leader>fw :call SourceByFiletype()<cr>
@@ -504,13 +506,14 @@ let g:which_key_map.g = {
 let g:which_key_map.l = {
 \'name' : '+lsp' ,
 \	'.' : [':CocConfig'                          , 'config'],
-\	'a' : ['<Plug>(coc-rename)'                  , 'alter name (rename)'],
+\	'a' : ['<Plug>(coc-codeaction)'              , 'code action'],
 \	'd' : ['<Plug>(coc-definition)'              , 'definition'],
 \	'f' : ['<Plug>(coc-format-selected)'         , 'format selected'],
 \	'i' : ['<Plug>(coc-implementation)'          , 'implementation'],
 \	'm' : [':CocList diagnostics'                , 'diagnostics messages'],
 \	'n' : ['<Plug>(coc-diagnostic-next-error)'   , 'next error'],
 \	'p' : ['<Plug>(coc-diagnostic-prev-error)'   , 'prev error'],
+\	'e' : ['<Plug>(coc-rename)'                  , 'edit name (rename)'],
 \	'r' : ['<Plug>(coc-references)'              , 'references'],
 \	's' : [':CocList -I symbols'                 , 'search symbols'],
 \	't' : ['<Plug>(coc-type-definition)'         , 'type definition'],
@@ -608,8 +611,8 @@ endif
 "                                                                               "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 function! StartVimBeGood()
-	:e vimbegood
-	:VimBeGood
+	e vimbegood
+	VimBeGood
 endfunction
 
 function! FixLastSpellingError()
