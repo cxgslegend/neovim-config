@@ -158,6 +158,9 @@ if has("autocmd")
 		autocmd WinEnter * :call NerdTreeWindowMaximizeHandler()
 		autocmd DiffUpdated * :call NerdTreeWindowMaximizeHandler()
 
+		" Whichkey dynamic keybindings
+		autocmd BufEnter * call WhichKeyDynamicMappings()
+
 		" We source this in a seperate file, so that when we source the
 		" init.vim file, it doesn't try to resource the SourceByFiletype() function
 		" while it is in use.
@@ -666,6 +669,26 @@ function! NerdTreeWindowMaximizeHandler()
 		endif
 	else
 		call ResizeCurrentWindow()
+	endif
+endfunction
+
+function! WhichKeyDynamicMappings()
+	let current_filetype = &filetype
+
+	" If we are in a php file set up php keymappings
+	if current_filetype ==? "php"
+		let g:which_key_map.p = { 'name' : '+php' }
+
+		nnoremap <buffer><leader>pf :!php artisan test --testsuit Feature<cr>
+		let g:which_key_map.p.f = 'feature tests'
+
+		nnoremap <buffer><leader>pu :!php artisan test --testsuit Unit<cr>
+		let g:which_key_map.p.u = 'unit tests'
+
+		nnoremap <buffer><leader>pa :!php artisan test<cr>
+		let g:which_key_map.p.a = 'all tests'
+	elseif has_key(g:which_key_map, 'p')
+		unlet g:which_key_map.p
 	endif
 endfunction
 
