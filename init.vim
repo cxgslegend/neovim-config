@@ -219,6 +219,11 @@ endif
 syntax on
 colorscheme hybrid
 
+" Needed to make the line numbers a little bit brighter. Made it hard to jump
+" by relative line numbers
+highlight LineNr                                        guifg='#949494' ctermfg=60
+highlight Folded                                        guifg='#949494' ctermfg=60
+
 " Make color column purple color
 highlight ColorColumn                                   guibg='#5f5f87' ctermbg=60
 
