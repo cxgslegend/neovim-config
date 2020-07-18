@@ -412,16 +412,10 @@ nnoremap <silent><expr> <c-space> coc#refresh()
 
 if exists('*complete_info')
 	inoremap <expr> <cr>
-		\ complete_info()["selected"] != "-1" ? "\<C-y>" :
-		\ <SID>CheckLeftCurlyBrace() ?
-		\ "\<C-g>u\<CR>\<ESC>\<S-O>" :
-		\ "\<C-g>u\<CR>"
+		\ complete_info()["selected"] != "-1" ? "\<C-y>" : <SID>CocNonSelectionAction()
 else
 	inoremap <expr> <cr>
-		\ pumvisible() ? "\<C-y>" :
-		\ <SID>CheckLeftCurlyBrace() ?
-		\ "\<C-g>u\<CR>\<ESC>\<S-O>" :
-		\ "\<C-g>u\<CR>"
+		\ pumvisible() ? "\<C-y>" : <SID>CocNonSelectionAction()
 endif
 
 " This unsets the "last search pattern" register by hitting return
@@ -704,12 +698,47 @@ function! s:CheckBackSpace() abort
 	let col = col('.') - 1
 	return !col || getline('.')[col - 1]  =~# '\(\s\|\\\|[\|]\|{\|}\|\[\|\]\|<\|>\|:\|,\|=\|(\|)\|\/\|;\)'
 endfunction
-"
+
+function! s:CocNonSelectionAction()
+	let l:current_filetype = &filetype
+	let l:goUpOneLineAndIndentCursor = "\<C-g>u\<CR>\<ESC>\<S-O>"
+	let l:putSimicolonAtEndOfLineThenGoUpOneLineAndIndentCursor = "\<C-g>u\<CR>\<ESC>A;\<ESC>\<S-O>"
+	let l:regularEnter = "\<C-g>u\<CR>"
+	let l:languagesWithSimicolonAfterSquareBracket = {
+\		'php'        : 1,
+\		'cpp'        : 1,
+\		'javascript' : 1
+\	}
+
+	if <SID>CheckLeftCurlyBrace()
+		return l:goUpOneLineAndIndentCursor
+	elseif <SID>CheckLeftSquareBracket()
+		if has_key(l:languagesWithSimicolonAfterSquareBracket, l:current_filetype)
+			if l:languagesWithSimicolonAfterSquareBracket[l:current_filetype]
+				return l:putSimicolonAtEndOfLineThenGoUpOneLineAndIndentCursor
+			else
+				return l:goUpOneLineAndIndentCursor
+			endif
+		else
+			return l:goUpOneLineAndIndentCursor
+		endif
+	else
+		return l:regularEnter
+	endif
+endfunction
+
 " Return true if your cursor is at column 0 or if the character behind your cursor
 " is a { character
 function! s:CheckLeftCurlyBrace() abort
 	let col = col('.') - 1
 	return !col || getline('.')[col - 1]  ==# '{'
+endfunction
+
+" Return true if your cursor is at column 0 or if the character behind your cursor
+" is a [ character
+function! s:CheckLeftSquareBracket() abort
+	let col = col('.') - 1
+	return !col || getline('.')[col - 1]  ==# '['
 endfunction
 
 " function! CreateMarkdownHeader()
