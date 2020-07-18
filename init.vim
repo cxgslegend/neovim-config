@@ -10,7 +10,7 @@
 "    -> * [0]  General Settings  *    | These following keys are safe to   |    "
 "    -> * [1]  Plugin Management *    | modify becuase they are pointless. |    "
 "    -> * [2]  Autocommands      *    |                                    |    "
-"    -> * [3]  Plug-in Settings  *    | <space>, <cr>, <bs>, and -         |    "
+"    -> * [3]  Settings          *    | <space>, <cr>, <bs>, and -         |    "
 "    -> * [4]  Mappings          *    --------------------------------------    "
 "    -> * [5]  Custom Functions  *                                              "
 "                                                                               "
@@ -213,7 +213,7 @@ endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                                                               "
-"                                Plug-in Settings                               "
+"                                    Settings                                   "
 "                                                                               "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 syntax on
