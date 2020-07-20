@@ -1,4 +1,3 @@
-
 function! MarkdownFolds()
 	return "0"
 endfunction

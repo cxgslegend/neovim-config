@@ -520,6 +520,11 @@ let g:which_key_map.l = {
 \	's' : [':CocList -I symbols'                 , 'search symbols'],
 \	't' : ['<Plug>(coc-type-definition)'         , 'type definition'],
 \}
+" Need visual mode mappings outside of dictionary mapping for now
+xmap <leader>lA <Plug>(coc-codeaction-selected)
+nmap <leader>lA <Plug>(coc-codeaction-selected)
+let g:which_key_map['l']['A'] = 'selected action'
+
 
 " n is for notes
 let g:which_key_map.n = {
