@@ -11,10 +11,8 @@ function! VimFolds()
 	let nextline = getline(v:lnum+1)
 	if (match(thisline, '\v^""+') >= 0) && (match(nextline, '\v^"\s+"$') >= 0)
 		return ">1"
-	else
-		return "="
 	endif
-	return "1"
+	return "="
 endfunction
 setlocal foldmethod=expr
 setlocal foldexpr=VimFolds()
