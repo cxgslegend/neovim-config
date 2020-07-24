@@ -18,7 +18,7 @@ setlocal foldmethod=expr
 setlocal foldexpr=VimFolds()
 
 function! VimFoldText()
-	let foldsize =(v:foldend-v:foldstart)
+	let foldsize = v:foldend - v:foldstart
 	return getline(v:foldstart+2).' ('.foldsize.' lines)'
 endfunction
 setlocal foldtext=VimFoldText()
